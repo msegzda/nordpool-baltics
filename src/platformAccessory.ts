@@ -87,7 +87,7 @@ export class NordpoolPlatformAccessory {
             const todayResults = results.filter(result => result.day === todayKey);
             const tomorrowResults = results.filter(result => result.day === tomorrowKey);
 
-            if (todayResults.length===24) {
+            if (todayResults.length === 24 || todayResults.length === 23 ) {
               this.pricesCache.set(todayKey, todayResults);
               this.pricing.today = todayResults;
               this.platform.log.debug(`OK: pulled Nordpool prices in ${this.platform.config.area} area for TODAY (${todayKey})`);
@@ -95,10 +95,10 @@ export class NordpoolPlatformAccessory {
               this.fnc.analyze_and_setServices(currentHour);
             } else {
               this.platform.log.warn('WARN: Something is incorrect with API response. Unable to determine today\'s Nordpool prices.');
-              this.platform.log.warn(`Raw response: ${results}`);
+              this.platform.log.warn(`Raw response: ${JSON.stringify(todayResults)}`);
             }
 
-            if ( tomorrowResults.length===24 ) {
+            if ( tomorrowResults.length === 24 || tomorrowResults.length === 23) {
               this.pricesCache.set(tomorrowKey, tomorrowResults);
 
               // keep decimalPrecision and area cache fresh so it does not ttl/expire

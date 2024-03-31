@@ -174,14 +174,6 @@ export class Functions {
   }
 
   getCheapestHoursToday() {
-    if (this.pricing.today.length !== 24) {
-      this.platform.log.warn(
-        'WARN: Cannot determine cheapest hours of the day because Nordpool dataset is not available '
-        + `or has abnormal amount of elements: ${this.pricing.today.length} (must be 24)`,
-      );
-      return;
-    }
-
     const sortedPrices = [...this.pricing.today].sort((a, b) => a.price - b.price);
 
     // make sure these arrays are empty on each (new day) re-calculation
@@ -199,7 +191,7 @@ export class Functions {
     );
 
     this.pricing.today
-      .map((price, idx) => ({ value: price.price, hour: idx }))
+      .map((price) => ({ value: price.price, hour: price.hour }))
       .forEach(({ value, hour }) => {
         if (value <= sortedPrices[0].price) {
           this.pricing.cheapestHour.push(hour);
@@ -219,7 +211,8 @@ export class Functions {
         if (value <= sortedPrices[7].price) {
           this.pricing.cheapest8Hours.push(hour);
         }
-        if ((value >= (sortedPrices[23].price * 0.9) || value >= this.pricing.median * this.excessivePriceMargin/100)
+        // last element
+        if ((value >= (sortedPrices[sortedPrices.length-1].price * 0.9) || value >= this.pricing.median * this.excessivePriceMargin/100)
                 && !this.pricing.cheapest8Hours.includes(hour)
         ) {
           this.pricing.priciestHour.push(hour);
@@ -280,11 +273,6 @@ export class Functions {
 
   async plotPricesChart(){
 
-    if (this.pricing.today.length !== 24) {
-      this.platform.log.warn('Cannot plot the chart because not complete or no pricing information is available');
-      return;
-    }
-
     const priceData = this.pricing.today.map(elem => elem.price);
 
     const chart = asciichart.plot(priceData, {
@@ -314,7 +302,7 @@ export class Functions {
 
   async analyze_and_setServices (currentHour: number) {
 
-    if (this.pricing.today.length === 24) {
+    if (this.pricing.today.length === 24 || this.pricing.today.length === 23 ) {
       this.pricing.currently = this.pricing.today[currentHour]['price'];
     } else {
       this.platform.log.warn('WARN: Unable to determine current hour Nordpool price because data not available');
