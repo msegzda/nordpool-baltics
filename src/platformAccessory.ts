@@ -81,7 +81,7 @@ export class NordpoolPlatformAccessory {
     if (this.pricing.today.length === 0
         || (currentHour >= 18 && !this.pricesCache.getSync(tomorrowKey))
     ) {
-      this.fnc.eleringEE_getNordpoolData()
+      this.fnc.pullNordpoolData()
         .then((results) => {
           if (results) {
             const todayResults = results.filter(result => result.day === todayKey);

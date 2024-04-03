@@ -1,10 +1,9 @@
 import { PlatformAccessory, API } from 'homebridge';
 import { NordpoolPlatform } from './platform';
+import { eleringEE_getNordpoolData } from './funcs_Elering';
 
 import { DateTime } from 'luxon';
-import axios from 'axios';
 import * as asciichart from 'asciichart';
-
 
 import {
   defaultAreaTimezone, PLATFORM_MANUFACTURER, PLATFORM_MODEL, PLATFORM_SERIAL_NUMBER,
@@ -110,6 +109,12 @@ export class Functions {
     this.platform.api.updatePlatformAccessories([this.accessory]);
   }
 
+  async pullNordpoolData() {
+    if (this.platform.config.area.match(/^(LT|LV|EE|FI)$/) ) {
+      return eleringEE_getNordpoolData(this.platform.log, this.platform.config);
+    }
+  }
+
   async checkSystemTimezone() {
     const systemTimezone = DateTime.local().toFormat('ZZ');
     const preferredTimezone = DateTime.local().setZone(defaultAreaTimezone).toFormat('ZZ');
@@ -125,52 +130,6 @@ export class Functions {
         `OK: system timezone ${systemTimezone} match ${this.platform.config.area} area timezone ${preferredTimezone}`,
       );
     }
-  }
-
-  async eleringEE_getNordpoolData() {
-    const start = DateTime.utc().startOf('day').minus({hours:4}).toISO();
-    const end = DateTime.utc().plus({days:1}).endOf('day').toISO();
-
-    const encodedStart = encodeURIComponent(start);
-    const encodedEnd = encodeURIComponent(end);
-
-    try {
-      const url = `https://dashboard.elering.ee/api/nps/price?start=${encodedStart}&end=${encodedEnd}`;
-      const response = await axios.get(url);
-      if (response.status !== 200 ) {
-        this.platform.log.warn(`WARN: Nordpool API provider Elering returned unusual response status ${response.status}`);
-      }
-      if (response.data.data) {
-        const convertedData = this.eleringEE_convertDataStructure(response.data.data);
-        return convertedData;
-      } else {
-        this.platform.log.error(`ERR: Nordpool API provider Elering returned unusual data ${JSON.stringify(response.data)}`);
-      }
-    } catch (error) {
-      this.platform.log.error(`ERR: General Nordpool API provider Elering error: ${error}`);
-    }
-    return null;
-  }
-
-  eleringEE_convertDataStructure(
-    data: { [x: string]: { timestamp: number; price: number }[] },
-  ) {
-    const area = this.platform.config.area.toLowerCase();
-    const decimalPrecision = this.platform.config.decimalPrecision ?? 1;
-
-    return data[area].map((item: { timestamp: number; price: number }) => {
-      // convert the timestamp to ISO string, add the '+02:00' timezone offset
-      const date = DateTime.fromISO(new Date(item.timestamp * 1000).toISOString()).setZone(defaultAreaTimezone);
-
-      // divide by 10 to convert price to cents per kWh
-      item.price = parseFloat((item.price / 10).toFixed(decimalPrecision));
-
-      return {
-        day: date.toFormat('yyyy-MM-dd'),
-        hour: parseInt(date.toFormat('HH')),
-        price: item.price,
-      };
-    });
   }
 
   getCheapestHoursToday() {
