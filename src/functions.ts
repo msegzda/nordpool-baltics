@@ -14,6 +14,7 @@ export class Functions {
 
   private decimalPrecision = this.platform.config.decimalPrecision ?? 1;
   private excessivePriceMargin = this.platform.config.excessivePriceMargin ?? 200;
+  private minPriciestMargin = this.platform.config.minPriciestMargin ?? 0;
   private plotTheChart:boolean = this.platform.config.plotTheChart ?? false;
   private dynamicCheapestConsecutiveHours:boolean = this.platform.config.dynamicCheapestConsecutiveHours ?? false;
   private pricesCache = defaultPricesCache(this.api);
@@ -171,8 +172,10 @@ export class Functions {
           this.pricing.cheapest8Hours.push(hour);
         }
         // last element
-        if ((value >= (sortedPrices[sortedPrices.length-1].price * 0.9) || value >= this.pricing.median * this.excessivePriceMargin/100)
+        if (
+          (value >= (sortedPrices[sortedPrices.length-1].price * 0.9) || value >= this.pricing.median * this.excessivePriceMargin/100)
                 && !this.pricing.cheapest8Hours.includes(hour)
+                && value > this.minPriciestMargin
         ) {
           this.pricing.priciestHour.push(hour);
         }

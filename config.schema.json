@@ -119,6 +119,15 @@
                 "minimum": 50,
                 "maximum": 400
             },
+            "minPriciestMargin": {
+                "title": "Minimum Price Threshold for Priciest Hour(s)",
+                "description": "The minimum hour price (in cents) for inclusion in the calculation of the `Nordpool_priciestHour`. Default 0 (cents).",
+                "required": false,
+                "default": 0,
+                "minimum": 0,
+                "maximum": 500,
+                "type": "number"
+            },
             "plotTheChart": {
                 "title": "Plot Electricity Price Chart",
                 "description": "If enabled, current day Nordpool prices chart will show up in log at midnight or upon (re)start of the plugin.",

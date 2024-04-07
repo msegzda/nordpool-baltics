@@ -42,7 +42,8 @@ Plugin exposes the below described 'virtual' accessories:
 1. `Nordpool_priciestHour`: This Motion Sensor triggers 'motion detected' when **any** of the following is true:
     - Current hour price is most expensive of the day;
     - Current hour price is within 10% difference from most expensive hour;
-    - Current hour price exceeds 'Excessive Price Margin Above Median' value (default 200%).
+    - Current hour price exceeds configured 'Excessive Price Margin Above Median' value (default 200%);
+    - Current hour price exceeds configured 'Minimum Price Threshold for Priciest Hour(s)' value (default 0).
 
 1. `Nordpool_currentHour` (optional on Plugin Config): Temperature sensor (possible values 0-23) denoting current hour of the day (24h format). Eliminates 'current hour' scripting needed on HomeKit rules.
 
