@@ -190,7 +190,12 @@ export class Functions {
       }
     }
 
-    this.platform.log.info(`Most expensive hour(s): ${this.pricing.priciestHour.join(', ')}`);
+    if (this.pricing.priciestHour.length === 0) {
+      this.platform.log.info(`Most expensive hour(s): N/A (all hours prices fall below ${this.minPriciestMargin} cents)`);
+    } else {
+      this.platform.log.info(`Most expensive hour(s): ${this.pricing.priciestHour.join(', ')}`);
+    }
+
     this.platform.log.info(`Median price today: ${this.pricing.median} cents`);
 
     if (this.plotTheChart) {
