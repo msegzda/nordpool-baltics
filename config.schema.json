@@ -67,31 +67,55 @@
             "cheapest5Hours": {
                 "required": true,
                 "type": "boolean",
-                "default": true,
+                "default": false,
                 "title": "Show 'cheapest 5 hours' sensor (Nordpool_cheapest5Hours)"
             },
             "cheapest6Hours": {
                 "required": true,
                 "type": "boolean",
-                "default": true,
+                "default": false,
                 "title": "Show 'cheapest 6 hours' sensor (Nordpool_cheapest6Hours)"
             },
             "cheapest7Hours": {
                 "required": true,
                 "type": "boolean",
-                "default": true,
+                "default": false,
                 "title": "Show 'cheapest 7 hours' sensor (Nordpool_cheapest7Hours)"
             },
             "cheapest8Hours": {
                 "required": true,
                 "type": "boolean",
-                "default": true,
+                "default": false,
                 "title": "Show 'cheapest 8 hours' sensor (Nordpool_cheapest8Hours)"
+            },
+            "cheapest9Hours": {
+                "required": true,
+                "type": "boolean",
+                "default": false,
+                "title": "Show 'cheapest 9 hours' sensor (Nordpool_cheapest9Hours)"
+            },
+            "cheapest10Hours": {
+                "required": true,
+                "type": "boolean",
+                "default": false,
+                "title": "Show 'cheapest 10 hours' sensor (Nordpool_cheapest10Hours)"
+            },
+            "cheapest11Hours": {
+                "required": true,
+                "type": "boolean",
+                "default": false,
+                "title": "Show 'cheapest 11 hours' sensor (Nordpool_cheapest11Hours)"
+            },
+            "cheapest12Hours": {
+                "required": true,
+                "type": "boolean",
+                "default": false,
+                "title": "Show 'cheapest 12 hours' sensor (Nordpool_cheapest12Hours)"
             },
             "cheapest5HoursConsec": {
                 "required": true,
                 "type": "boolean",
-                "default": true,
+                "default": false,
                 "title": "Show 'cheapest 5 consecutive hours' sensor (Nordpool_cheapest5HoursConsec)"
             },
             "dynamicCheapestConsecutiveHours": {
@@ -134,6 +158,46 @@
                 "required": false,
                 "default": false,
                 "type": "boolean"
+            },
+            "solarOverride": {
+                "title": "Solar Plant Nordpool Override",
+                "description": "If you own solar power plant, set best hours it covers ALL your household needs in JUNE. For more details go to <a href='https://github.com/msegzda/homebridge-nordpool-baltics/blob/latest/README.md#if-you-own-solar-power-plant' target='_blank'>plugin README</a>. Nordpool price will override to 0 during best solar power generation hours.",
+                "type": "boolean",
+                "required": true,
+                "default": false
+            },
+            "solarOverrideJuneHourStart": {
+                "title": "Start hour of best solar yield in June:",
+                "required": false,
+                "default": 7,
+                "minimum": 0,
+                "maximum": 12,
+                "type": "number",
+                "condition": {
+                    "functionBody": "return model.solarOverride === true;"
+                }
+            },
+            "solarOverrideJuneHourEnd": {
+                "title": "Last hour (inclusive) of best solar yield in June:",
+                "required": false,
+                "default": 18,
+                "minimum": 13,
+                "maximum": 23,
+                "type": "number",
+                "condition": {
+                    "functionBody": "return model.solarOverride === true;"
+                }
+            },
+            "latitude": {
+                "title": "Latitude (<a href='https://www.latlong.net/' target='_blank'>locator here</a>) of your solar plant location:",
+                "required": false,
+                "default": 54.7,
+                "minimum": 50,
+                "maximum": 71,
+                "type": "number",
+                "condition": {
+                    "functionBody": "return model.solarOverride === true;"
+                }
             }
         }
     }

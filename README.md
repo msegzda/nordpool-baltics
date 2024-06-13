@@ -35,7 +35,7 @@ Plugin exposes the below described 'virtual' accessories:
 
 1. `Nordpool_cheapestHour`: Motion Sensor goes into 'motion detected' state if current hour electricity price ranks cheapest in the day. There can be more than one cheapest hours in the event of repeated same-price occurrences;
 
-1. `Nordpool_cheapest4Hours` to `Nordpool_cheapest8Hours` (optional on Plugin Config): A series of Motion Sensors which trigger a 'motion detected' state when the current hour's electricity price ranks among the cheapest of the day. The count can exceed the specified number in the event of repeated same-price occurrences;
+1. `Nordpool_cheapest4Hours` to `Nordpool_cheapest12Hours` (optional on Plugin Config): A series of Motion Sensors which trigger a 'motion detected' state when the current hour's electricity price ranks among the cheapest of the day. The count can exceed the specified number in the event of repeated same-price occurrences;
 
 1. `Nordpool_cheapest5HoursConsec` (optional on Plugin Config): This Motion Sensor triggers during the 5 consecutive lowest-priced electricity hours ensuring energy-intensive appliances can operate uninterrupted for a stretch of 5 hours. Note more details about its [calculation below](#cheapest-consecutive-hours-calculation-logic).
 
@@ -73,6 +73,12 @@ Motion sensor `Nordpool_cheapest5HoursConsec` calculation logic is the following
 - **At 00:00 (midnight)**: If the 6PM run did not result in a *shift*, it will recalculate as normal using the pricing information of the new day.
 
 - **At 07:00 (7AM)**: If the 6PM run *shifted* the 5-hour period, a recalculation happens considering the remaining pricing information of the current day.
+
+## If You Own Solar Power Plant ##
+
+If you own solar power plant and it covers all of your household needs during specific daytime hours in month of June then configure the plugin accordingly.
+
+Using configured solar plant latitude an automatic calculation will be applied of best solar yield hours in the months of March-September (inclusive). During best solar yield hours Nordpool price is overridden to 0.
 
 ## Important Remark About Timezones ##
 

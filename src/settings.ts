@@ -41,6 +41,10 @@ export interface Pricing {
     cheapest6Hours: number[];
     cheapest7Hours: number[];
     cheapest8Hours: number[];
+    cheapest9Hours: number[];
+    cheapest10Hours: number[];
+    cheapest11Hours: number[];
+    cheapest12Hours: number[];
     priciestHour: number[];
     median: number;
     median2days: number;
@@ -58,6 +62,10 @@ export const defaultPricing: Pricing = {
   cheapest6Hours: [],
   cheapest7Hours: [],
   cheapest8Hours: [],
+  cheapest9Hours: [],
+  cheapest10Hours: [],
+  cheapest11Hours: [],
+  cheapest12Hours: [],
   priciestHour: [],
   median: 0,
   median2days: 0,
@@ -72,6 +80,10 @@ export const defaultService: SensorType = {
   cheapest6Hours: null,
   cheapest7Hours: null,
   cheapest8Hours: null,
+  cheapest9Hours: null,
+  cheapest10Hours: null,
+  cheapest11Hours: null,
+  cheapest12Hours: null,
   priciestHour: null,
   hourlyTickerSwitch: null,
 };

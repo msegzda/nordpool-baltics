@@ -1,4 +1,4 @@
-import { PlatformAccessory, API } from 'homebridge';
+import { PlatformAccessory, API, PlatformConfig } from 'homebridge';
 import { NordpoolPlatform } from './platform';
 import { eleringEE_getNordpoolData } from './funcs_Elering';
 
@@ -133,8 +133,53 @@ export class Functions {
     }
   }
 
+  applySolarOverride(pricing: Pricing, config: PlatformConfig) {
+    if (config.solarOverride === null || config.solarOverride !== true) {
+      return;
+    }
+
+    const today = DateTime.local();
+    if (today.month < 3 || today.month > 9) {
+      this.platform.log.info('Solar power plant override will apply in March-September months only.');
+      return;
+    }
+
+    const latitude = config.latitude || 55;
+
+    const daysDifference = today.diff(
+      DateTime.fromObject({ year: today.year, month: 6, day: 24 }), 'days').days;
+
+    const solarOffsetMinutes = Math.abs(daysDifference) * (1.6 + 0.04 * (latitude - 55));
+
+    const solarOverrideJuneHourStart = DateTime.fromObject({ hour: config.solarOverrideJuneHourStart })
+      .plus({ minutes: solarOffsetMinutes });
+    const solarOverrideJuneHourStartDecimal = Math.round(
+      solarOverrideJuneHourStart.hour + solarOverrideJuneHourStart.minute / 60,
+    );
+
+    // one hour added, to make configured value 'inclusive'
+    const solarOverrideJuneHourEnd = DateTime.fromObject({ hour: ++config.solarOverrideJuneHourEnd })
+      .minus({ minutes: solarOffsetMinutes });
+    const solarOverrideJuneHourEndDecimal = Math.round(
+      solarOverrideJuneHourEnd.hour + solarOverrideJuneHourEnd.minute / 60,
+    );
+
+    if (solarOverrideJuneHourStartDecimal < solarOverrideJuneHourEndDecimal) {
+      this.platform.log.debug(`solarOffsetMinutes: ${solarOffsetMinutes}`);
+      this.platform.log.debug(`solarOverrideJuneHourStart: ${solarOverrideJuneHourStart.toJSON()}`);
+      this.platform.log.debug(`solarOverrideJuneHourEnd: ${solarOverrideJuneHourEnd.toJSON()}`);
+      this.platform.log.warn(
+        `Hours from ${solarOverrideJuneHourStartDecimal} to ${solarOverrideJuneHourEndDecimal - 1} (inclusive) are overridden ` +
+          'price values to 0 because of solar plant settings.',
+      );
+
+      for (let i = solarOverrideJuneHourStartDecimal; i < solarOverrideJuneHourEndDecimal; i++) {
+        pricing.today[i].price = 0;
+      }
+    }
+  }
+
   getCheapestHoursToday() {
-    const sortedPrices = [...this.pricing.today].sort((a, b) => a.price - b.price);
 
     // make sure these arrays are empty on each (new day) re-calculation
     for (const key of Object.keys(this.pricing)) {
@@ -144,6 +189,9 @@ export class Functions {
       this.pricing[key] = [];
     }
 
+    this.applySolarOverride(this.pricing, this.platform.config);
+
+    const sortedPrices = [...this.pricing.today].sort((a, b) => a.price - b.price);
     this.pricing.median = parseFloat(
       ((sortedPrices[Math.floor(sortedPrices.length / 2) - 1].price +
           sortedPrices[Math.ceil(sortedPrices.length / 2)].price) / 2
@@ -171,10 +219,22 @@ export class Functions {
         if (value <= sortedPrices[7].price) {
           this.pricing.cheapest8Hours.push(hour);
         }
+        if (value <= sortedPrices[8].price) {
+          this.pricing.cheapest9Hours.push(hour);
+        }
+        if (value <= sortedPrices[9].price) {
+          this.pricing.cheapest10Hours.push(hour);
+        }
+        if (value <= sortedPrices[10].price) {
+          this.pricing.cheapest11Hours.push(hour);
+        }
+        if (value <= sortedPrices[11].price) {
+          this.pricing.cheapest12Hours.push(hour);
+        }
         // last element
         if (
           (value >= (sortedPrices[sortedPrices.length-1].price * 0.9) || value >= this.pricing.median * this.excessivePriceMargin/100)
-                && !this.pricing.cheapest8Hours.includes(hour)
+                && !this.pricing.cheapest12Hours.includes(hour)
                 && value > this.minPriciestMargin
         ) {
           this.pricing.priciestHour.push(hour);
@@ -183,7 +243,7 @@ export class Functions {
 
     this.platform.log.info(`Cheapest hour(s): ${this.pricing.cheapestHour.join(', ')}`);
 
-    for (let i=4; i<=8; i++) {
+    for (let i=4; i<=12; i++) {
       const key = `cheapest${i}Hours`;
       if (this.platform.config[key] !== undefined && this.platform.config[key]) {
         this.platform.log.info(`${i} cheapest hours: ${this.pricing[key].join(', ')}`);
