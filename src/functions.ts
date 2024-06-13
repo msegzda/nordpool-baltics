@@ -140,7 +140,7 @@ export class Functions {
 
     const today = DateTime.local();
     if (today.month < 3 || today.month > 9) {
-      this.platform.log.info('Solar power plant override will apply in March-September months only.');
+      this.platform.log.warn('Solar power plant override will apply in March-September months only.');
       return;
     }
 
