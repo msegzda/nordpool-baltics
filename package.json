@@ -3,7 +3,7 @@
     "name": "homebridge-nordpool-baltics",
     "version": "1.4.1",
     "private": false,
-    "description": "Plugin exposes virtual accessories (switch, light, presence sensors) and enables HomeKit automation by Nordpool electricity pricing in supported countries.",
+    "description": "Plugin exposes virtual (switch, light, presence, temperature) accessories and enables HomeKit automation by Nordpool electricity pricing in supported countries.",
     "homepage": "https://github.com/msegzda/homebridge-nordpool-baltics",
     "author": {
         "name": "Mantas Segzda",
