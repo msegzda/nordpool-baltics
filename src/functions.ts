@@ -1,6 +1,7 @@
 import { PlatformAccessory, API, PlatformConfig } from 'homebridge';
 import { NordpoolPlatform } from './platform';
 import { eleringEE_getNordpoolData } from './funcs_Elering';
+import { fnc_todayKey } from './settings';
 
 import { DateTime } from 'luxon';
 import * as asciichart from 'asciichart';
@@ -133,7 +134,7 @@ export class Functions {
     }
   }
 
-  applySolarOverride(pricing: Pricing, config: PlatformConfig) {
+  applySolarOverride(pricing: Pricing, config: PlatformConfig, force: boolean) {
     if (config.solarOverride === null || config.solarOverride !== true) {
       return;
     }
@@ -141,6 +142,11 @@ export class Functions {
     const today = DateTime.local();
     if (today.month < 3 || today.month > 9) {
       this.platform.log.warn('Solar power plant override will apply in March-September months only.');
+      return;
+    }
+
+    const todayKey = fnc_todayKey();
+    if ( !force && this.pricesCache.getSync(`solarOverrideApplied_${todayKey}`) ) {
       return;
     }
 
@@ -177,6 +183,7 @@ export class Functions {
         pricing.today[i].price = 0;
       }
     }
+    this.pricesCache.set(`solarOverrideApplied_${todayKey}`, true, (86400-10));
   }
 
   getCheapestHoursToday() {
@@ -189,7 +196,7 @@ export class Functions {
       this.pricing[key] = [];
     }
 
-    this.applySolarOverride(this.pricing, this.platform.config);
+    this.applySolarOverride(this.pricing, this.platform.config, false);
 
     const sortedPrices = [...this.pricing.today].sort((a, b) => a.price - b.price);
     this.pricing.median = parseFloat(

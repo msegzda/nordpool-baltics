@@ -92,6 +92,7 @@ export class NordpoolPlatformAccessory {
               this.pricing.today = todayResults;
               this.platform.log.debug(`OK: pulled Nordpool prices in ${this.platform.config.area} area for TODAY (${todayKey})`);
               this.platform.log.debug(JSON.stringify(todayResults.map(({ hour, price }) => ({ hour, price }))));
+              this.fnc.applySolarOverride(this.pricing, this.platform.config, true);
               this.fnc.analyze_and_setServices(currentHour);
             } else {
               this.platform.log.warn('WARN: Something is incorrect with API response. Unable to determine today\'s Nordpool prices.');
