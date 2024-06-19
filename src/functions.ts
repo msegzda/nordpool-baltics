@@ -135,18 +135,19 @@ export class Functions {
   }
 
   applySolarOverride(pricing: Pricing, config: PlatformConfig, force: boolean) {
-    if (config.solarOverride === null || config.solarOverride !== true) {
+    if (config.solarOverride === null || config.solarOverride === false) {
       return;
     }
 
     const today = DateTime.local();
     if (today.month < 3 || today.month > 9) {
-      this.platform.log.warn('Solar power plant override will apply in March-September months only.');
+      this.platform.log.warn('Solar power plant override applies in March-September months only.');
       return;
     }
 
     const todayKey = fnc_todayKey();
     if ( !force && this.pricesCache.getSync(`solarOverrideApplied_${todayKey}`) ) {
+      this.platform.log.debug('Solar power plant override already applied.');
       return;
     }
 
@@ -183,7 +184,7 @@ export class Functions {
         pricing.today[i].price = 0;
       }
     }
-    this.pricesCache.set(`solarOverrideApplied_${todayKey}`, true, (86400-10));
+    this.pricesCache.set(`solarOverrideApplied_${todayKey}`, true);
   }
 
   getCheapestHoursToday() {
@@ -195,8 +196,6 @@ export class Functions {
       }
       this.pricing[key] = [];
     }
-
-    this.applySolarOverride(this.pricing, this.platform.config, false);
 
     const sortedPrices = [...this.pricing.today].sort((a, b) => a.price - b.price);
     this.pricing.median = parseFloat(
@@ -348,6 +347,8 @@ export class Functions {
       this.service.currentHour.getCharacteristic(this.platform.Characteristic.CurrentTemperature)
         .updateValue(currentHour);
     }
+
+    this.applySolarOverride(this.pricing, this.platform.config, false);
 
     // if new day or cheapest hours not calculated yet
     if (currentHour === 0 || this.pricing.cheapest4Hours.length === 0) {
