@@ -191,7 +191,7 @@
             "latitude": {
                 "title": "Latitude (<a href='https://www.latlong.net/' target='_blank'>locator here</a>) of your solar plant location:",
                 "required": false,
-                "default": 54.7,
+                "default": 55,
                 "minimum": 50,
                 "maximum": 71,
                 "type": "number",

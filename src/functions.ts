@@ -165,7 +165,7 @@ export class Functions {
     );
 
     // one hour added, to make configured value 'inclusive'
-    const solarOverrideJuneHourEnd = DateTime.fromObject({ hour: ++config.solarOverrideJuneHourEnd })
+    const solarOverrideJuneHourEnd = DateTime.fromObject({ hour: config.solarOverrideJuneHourEnd+1 })
       .minus({ minutes: solarOffsetMinutes });
     const solarOverrideJuneHourEndDecimal = Math.round(
       solarOverrideJuneHourEnd.hour + solarOverrideJuneHourEnd.minute / 60,

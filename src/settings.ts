@@ -1,5 +1,6 @@
 import { Service, API } from 'homebridge';
 import * as Path from 'path';
+import * as fs from 'fs';
 import { DateTime } from 'luxon';
 import { Cache } from 'file-system-cache';
 
@@ -89,9 +90,31 @@ export const defaultService: SensorType = {
 };
 
 export function defaultPricesCache(api: API) {
+  const ns = 'homebridge-nordpool-baltics';
+  const nsHash = 'b162cf22c8adb8fa829628b261839cad18dc3994';
   const storagePath = api.user.storagePath();
   const cacheDirectory = Path.join(storagePath, '.cache');
-  return new Cache({ basePath: cacheDirectory, ns: 'homebridge-nordpool-baltics', ttl: 172800 });
+
+  // auto-cleanup of old cached files on init
+  const files = fs.readdirSync(cacheDirectory);
+  const now = Date.now();
+
+  files.filter(file => file.startsWith(`${nsHash}-`)).forEach(file => {
+    const filePath = Path.join(cacheDirectory, file);
+    const stats = fs.statSync(filePath);
+    const fileAge = now - stats.mtimeMs;
+
+    // Check if file is older than 2 days
+    if (fileAge >= 172800*1000*2) {
+      try {
+        fs.unlinkSync(filePath);
+      } catch (error) {
+      // Ignore any error
+      }
+    }
+  });
+
+  return new Cache({ basePath: cacheDirectory, ns: ns, ttl: 172800 });
 }
 
 // same timezone applies to all Nordpool zones: LT, LV, EE, FI
