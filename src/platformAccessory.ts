@@ -90,7 +90,7 @@ export class NordpoolPlatformAccessory {
             if (todayResults.length === 24 || todayResults.length === 23 ) {
               this.pricesCache.set(todayKey, todayResults);
               this.pricing.today = todayResults;
-              this.pricesCache.remove(`solarOverrideApplied_${todayKey}`);
+              this.pricesCache.setSync(`solarOverrideApplied_${todayKey}`, false);
               this.platform.log.debug(`OK: pulled Nordpool prices in ${this.platform.config.area} area for TODAY (${todayKey})`);
               this.platform.log.debug(JSON.stringify(todayResults.map(({ hour, price }) => ({ hour, price }))));
               this.fnc.analyze_and_setServices(currentHour);

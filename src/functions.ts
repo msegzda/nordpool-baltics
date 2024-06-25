@@ -147,7 +147,6 @@ export class Functions {
 
     const todayKey = fnc_todayKey();
     if ( !force && this.pricesCache.getSync(`solarOverrideApplied_${todayKey}`) ) {
-      this.platform.log.debug('Solar power plant override already applied.');
       return;
     }
 
