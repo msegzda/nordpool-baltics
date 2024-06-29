@@ -2,7 +2,7 @@ import { PlatformAccessory, API } from 'homebridge';
 import { NordpoolPlatform } from './platform';
 
 import {
-  defaultPricing, defaultService, defaultPricesCache,
+  pricing, defaultService, defaultPricesCache,
   fnc_todayKey, fnc_tomorrowKey, fnc_currentHour,
 } from './settings';
 
@@ -13,10 +13,9 @@ export class NordpoolPlatformAccessory {
 
   private decimalPrecision = this.platform.config.decimalPrecision ?? 1;
   private dynamicCheapestConsecutiveHours:boolean = this.platform.config.dynamicCheapestConsecutiveHours ?? false;
-  private pricing = defaultPricing;
   private service = defaultService;
   private pricesCache = defaultPricesCache(this.api);
-  private fnc = new Functions(this.platform, this.accessory, this.pricing, this.service, this.api);
+  private fnc = new Functions(this.platform, this.accessory, this.service, this.api);
 
   constructor(
     private readonly platform: NordpoolPlatform,
@@ -77,8 +76,8 @@ export class NordpoolPlatformAccessory {
       }
     }
 
-    this.pricing.today = this.pricesCache.getSync(todayKey, []);
-    if (this.pricing.today.length === 0
+    pricing.today = this.pricesCache.getSync(todayKey, []);
+    if (pricing.today.length === 0
         || (currentHour >= 18 && !this.pricesCache.getSync(tomorrowKey))
     ) {
       this.fnc.pullNordpoolData()
@@ -89,7 +88,7 @@ export class NordpoolPlatformAccessory {
 
             if (todayResults.length === 24 || todayResults.length === 23 ) {
               this.pricesCache.set(todayKey, todayResults);
-              this.pricing.today = todayResults;
+              pricing.today = todayResults;
               this.pricesCache.setSync(`solarOverrideApplied_${todayKey}`, false);
               this.platform.log.debug(`OK: pulled Nordpool prices in ${this.platform.config.area} area for TODAY (${todayKey})`);
               this.platform.log.debug(JSON.stringify(todayResults.map(({ hour, price }) => ({ hour, price }))));
@@ -124,7 +123,7 @@ export class NordpoolPlatformAccessory {
           this.platform.log.error(`ERR: Failed to get todays's prices, will retry in 1 hour. ${error}`);
         });
     } else {
-      this.pricing.today = this.pricesCache.getSync(todayKey, []);
+      pricing.today = this.pricesCache.getSync(todayKey, []);
       this.fnc.analyze_and_setServices(currentHour);
     }
   }

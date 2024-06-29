@@ -8,7 +8,7 @@ import * as asciichart from 'asciichart';
 
 import {
   defaultAreaTimezone, PLATFORM_MANUFACTURER, PLATFORM_MODEL, PLATFORM_SERIAL_NUMBER,
-  Pricing, NordpoolData, SensorType, defaultPricesCache, fnc_tomorrowKey, fnc_currentHour,
+  pricing, NordpoolData, SensorType, defaultPricesCache, fnc_tomorrowKey, fnc_currentHour,
 } from './settings';
 
 export class Functions {
@@ -23,7 +23,6 @@ export class Functions {
   constructor(
     private readonly platform: NordpoolPlatform,
     private readonly accessory: PlatformAccessory,
-    private readonly pricing: Pricing,
     private readonly service: SensorType,
     private readonly api: API,
   ) {}
@@ -42,7 +41,7 @@ export class Functions {
     // set default price level
     if (this.service.currently) {
       this.service.currently.getCharacteristic(this.platform.Characteristic.CurrentAmbientLightLevel)
-        .updateValue(this.pricing.currently);
+        .updateValue(pricing.currently);
     }
 
     // hourly ticker
@@ -134,7 +133,7 @@ export class Functions {
     }
   }
 
-  applySolarOverride(pricing: Pricing, config: PlatformConfig, force: boolean) {
+  applySolarOverride(config: PlatformConfig, force: boolean) {
     if (config.solarOverride === null || config.solarOverride === false) {
       return;
     }
@@ -183,85 +182,86 @@ export class Functions {
         pricing.today[i].price = 0;
       }
     }
+    this.pricesCache.set(todayKey, pricing.today);
     this.pricesCache.set(`solarOverrideApplied_${todayKey}`, true);
   }
 
   getCheapestHoursToday() {
 
     // make sure these arrays are empty on each (new day) re-calculation
-    for (const key of Object.keys(this.pricing)) {
+    for (const key of Object.keys(pricing)) {
       if (!/^(cheapest|priciest|cheapest5HoursConsec)/.test(key)) {
         continue;
       }
-      this.pricing[key] = [];
+      pricing[key] = [];
     }
 
-    const sortedPrices = [...this.pricing.today].sort((a, b) => a.price - b.price);
-    this.pricing.median = parseFloat(
+    const sortedPrices = [...pricing.today].sort((a, b) => a.price - b.price);
+    pricing.median = parseFloat(
       ((sortedPrices[Math.floor(sortedPrices.length / 2) - 1].price +
           sortedPrices[Math.ceil(sortedPrices.length / 2)].price) / 2
       ).toFixed(this.decimalPrecision),
     );
 
-    this.pricing.today
+    pricing.today
       .map((price) => ({ value: price.price, hour: price.hour }))
       .forEach(({ value, hour }) => {
         if (value <= sortedPrices[0].price) {
-          this.pricing.cheapestHour.push(hour);
+          pricing.cheapestHour.push(hour);
         }
         if (value <= sortedPrices[3].price) {
-          this.pricing.cheapest4Hours.push(hour);
+          pricing.cheapest4Hours.push(hour);
         }
         if (value <= sortedPrices[4].price) {
-          this.pricing.cheapest5Hours.push(hour);
+          pricing.cheapest5Hours.push(hour);
         }
         if (value <= sortedPrices[5].price) {
-          this.pricing.cheapest6Hours.push(hour);
+          pricing.cheapest6Hours.push(hour);
         }
         if (value <= sortedPrices[6].price) {
-          this.pricing.cheapest7Hours.push(hour);
+          pricing.cheapest7Hours.push(hour);
         }
         if (value <= sortedPrices[7].price) {
-          this.pricing.cheapest8Hours.push(hour);
+          pricing.cheapest8Hours.push(hour);
         }
         if (value <= sortedPrices[8].price) {
-          this.pricing.cheapest9Hours.push(hour);
+          pricing.cheapest9Hours.push(hour);
         }
         if (value <= sortedPrices[9].price) {
-          this.pricing.cheapest10Hours.push(hour);
+          pricing.cheapest10Hours.push(hour);
         }
         if (value <= sortedPrices[10].price) {
-          this.pricing.cheapest11Hours.push(hour);
+          pricing.cheapest11Hours.push(hour);
         }
         if (value <= sortedPrices[11].price) {
-          this.pricing.cheapest12Hours.push(hour);
+          pricing.cheapest12Hours.push(hour);
         }
         // last element
         if (
-          (value >= (sortedPrices[sortedPrices.length-1].price * 0.9) || value >= this.pricing.median * this.excessivePriceMargin/100)
-                && !this.pricing.cheapest12Hours.includes(hour)
+          (value >= (sortedPrices[sortedPrices.length-1].price * 0.9) || value >= pricing.median * this.excessivePriceMargin/100)
+                && !pricing.cheapest12Hours.includes(hour)
                 && value > this.minPriciestMargin
         ) {
-          this.pricing.priciestHour.push(hour);
+          pricing.priciestHour.push(hour);
         }
       });
 
-    this.platform.log.info(`Cheapest hour(s): ${this.pricing.cheapestHour.join(', ')}`);
+    this.platform.log.info(`Cheapest hour(s): ${pricing.cheapestHour.join(', ')}`);
 
     for (let i=4; i<=12; i++) {
       const key = `cheapest${i}Hours`;
       if (this.platform.config[key] !== undefined && this.platform.config[key]) {
-        this.platform.log.info(`${i} cheapest hours: ${this.pricing[key].join(', ')}`);
+        this.platform.log.info(`${i} cheapest hours: ${pricing[key].join(', ')}`);
       }
     }
 
-    if (this.pricing.priciestHour.length === 0) {
+    if (pricing.priciestHour.length === 0) {
       this.platform.log.info(`Most expensive hour(s): N/A (all hours prices fall below ${this.minPriciestMargin} cents)`);
     } else {
-      this.platform.log.info(`Most expensive hour(s): ${this.pricing.priciestHour.join(', ')}`);
+      this.platform.log.info(`Most expensive hour(s): ${pricing.priciestHour.join(', ')}`);
     }
 
-    this.platform.log.info(`Median price today: ${this.pricing.median} cents`);
+    this.platform.log.info(`Median price today: ${pricing.median} cents`);
 
     if (this.plotTheChart) {
       this.plotPricesChart().then().catch((error)=> {
@@ -305,7 +305,7 @@ export class Functions {
 
   async plotPricesChart(){
 
-    const priceData = this.pricing.today.map(elem => elem.price);
+    const priceData = pricing.today.map(elem => elem.price);
 
     const chart = asciichart.plot(priceData, {
       padding: '      ', // 6 spaces
@@ -322,7 +322,7 @@ export class Functions {
   setOccupancyByHour(currentHour: number, accessoryName: string) {
     let characteristic = this.platform.Characteristic.OccupancyDetected.OCCUPANCY_NOT_DETECTED;
 
-    if (this.pricing[accessoryName].includes(currentHour)) {
+    if (pricing[accessoryName].includes(currentHour)) {
       characteristic = this.platform.Characteristic.OccupancyDetected.OCCUPANCY_DETECTED;
     }
     const accessoryService = this.service[accessoryName];
@@ -334,36 +334,36 @@ export class Functions {
 
   async analyze_and_setServices (currentHour: number) {
 
-    if (this.pricing.today.length === 24 || this.pricing.today.length === 23 ) {
-      this.pricing.currently = this.pricing.today[currentHour]['price'];
+    if (pricing.today.length === 24 || pricing.today.length === 23 ) {
+      pricing.currently = pricing.today[currentHour]['price'];
     } else {
       this.platform.log.warn('WARN: Unable to determine current hour Nordpool price because data not available');
       return;
     }
 
-    this.pricing.currentHour = currentHour;
+    pricing.currentHour = currentHour;
     if (this.service.currentHour) {
       this.service.currentHour.getCharacteristic(this.platform.Characteristic.CurrentTemperature)
         .updateValue(currentHour);
     }
 
-    this.applySolarOverride(this.pricing, this.platform.config, false);
+    this.applySolarOverride(this.platform.config, false);
 
     // if new day or cheapest hours not calculated yet
-    if (currentHour === 0 || this.pricing.cheapest4Hours.length === 0) {
+    if (currentHour === 0 || pricing.cheapest4Hours.length === 0) {
       this.getCheapestHoursToday();
     }
 
     if (
-      this.pricing.cheapest5HoursConsec.length === 0
+      pricing.cheapest5HoursConsec.length === 0
         || currentHour === 0
         || (currentHour === 7 && this.dynamicCheapestConsecutiveHours)
     ) {
-      this.getCheapestConsecutiveHours(5, this.pricing.today).then((retVal) => {
-        this.pricing.cheapest5HoursConsec = retVal;
+      this.getCheapestConsecutiveHours(5, pricing.today).then((retVal) => {
+        pricing.cheapest5HoursConsec = retVal;
         this.setOccupancyByHour(currentHour, 'cheapest5HoursConsec');
       }).catch((error)=> {
-        this.pricing.cheapest5HoursConsec = []; // make sure its empty in case of error
+        pricing.cheapest5HoursConsec = []; // make sure its empty in case of error
         this.platform.log.error('An error occurred calculating cheapest 5 consecutive hours: ', error);
       });
     }
@@ -371,23 +371,23 @@ export class Functions {
     // set current price level on light sensor
     if (this.service.currently) {
       this.service.currently.getCharacteristic(this.platform.Characteristic.CurrentAmbientLightLevel)
-        .updateValue(this.pricing.currently >= 0.0001 ? this.pricing.currently : 0.0001);
+        .updateValue(pricing.currently >= 0.0001 ? pricing.currently : 0.0001);
     }
 
     // set price levels on relevant occupancy sensors
-    for (const key of Object.keys(this.pricing)) {
+    for (const key of Object.keys(pricing)) {
       if (!/^(cheapest|priciest)/.test(key)) {
         continue;
       }
 
-      if (!this.service[key] || !Array.isArray(this.pricing[key])) {
+      if (!this.service[key] || !Array.isArray(pricing[key])) {
         continue;
       }
 
       this.setOccupancyByHour(currentHour, key);
     }
 
-    this.platform.log.info(`Hour: ${currentHour}; Price: ${this.pricing.currently} cents`);
+    this.platform.log.info(`Hour: ${currentHour}; Price: ${pricing.currently} cents`);
 
     // toggle hourly ticker in 1s ON
     if (this.service.hourlyTickerSwitch) {
@@ -411,16 +411,16 @@ export class Functions {
     let twoDaysPricing = [] as Array<NordpoolData>;
 
     // stop function if not full data
-    if ( this.pricing.today.length !== 24 || tomorrow.length !== 24 ) {
+    if ( pricing.today.length !== 24 || tomorrow.length !== 24 ) {
       return;
     }
 
     const remainingHoursToday = Array.from({length: Math.min(24 - currentHour, 24)}, (_, i) => currentHour + i);
 
     // Check if any of the remaining hours are within the cheapest consecutive hours
-    if( this.pricing.cheapest5HoursConsec.some(hour => remainingHoursToday.includes(hour)) ) {
+    if( pricing.cheapest5HoursConsec.some(hour => remainingHoursToday.includes(hour)) ) {
       // from now till next day 6AM
-      twoDaysPricing = this.pricing.today.slice(currentHour, 24).concat(tomorrow.slice(0, 7));
+      twoDaysPricing = pricing.today.slice(currentHour, 24).concat(tomorrow.slice(0, 7));
     } else {
       // do nothing, allow recalculate 0AM
       this.pricesCache.remove('5consecutiveUpdated');
@@ -428,7 +428,7 @@ export class Functions {
     }
 
     this.getCheapestConsecutiveHours(5, twoDaysPricing).then((retVal) => {
-      this.pricing.cheapest5HoursConsec = retVal;
+      pricing.cheapest5HoursConsec = retVal;
       this.setOccupancyByHour(currentHour, 'cheapest5HoursConsec');
       // ttl in seconds till next morning 7am
       const ttl = this.ttlSecondsTill_7AM();
