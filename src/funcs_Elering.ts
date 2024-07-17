@@ -12,7 +12,7 @@ export async function eleringEE_getNordpoolData(log:Logger, config:PlatformConfi
   const encodedEnd = encodeURIComponent(end);
 
   try {
-    const url = `https://dashboard.elering.ee/api/nps/price?start=${encodedStart}&end=${encodedEnd}`;
+    const url = `https://api.awattar.at/v1/marketdata?start=${encodedStart}&end=${encodedEnd}`;
     const response = await axios.get(url);
     if (response.status !== 200 ) {
       log.warn(`WARN: Nordpool API provider Elering returned unusual response status ${response.status}`);
@@ -30,23 +30,23 @@ export async function eleringEE_getNordpoolData(log:Logger, config:PlatformConfi
 }
 
 export function eleringEE_convertDataStructure(
-  data: { [x: string]: { timestamp: number; price: number }[] },
+  data: { [x: string]: { start_timestamp: number; marketprice: number }[] },
   config: PlatformConfig,
 ) {
   const area = config.area.toLowerCase();
   const decimalPrecision = config.decimalPrecision ?? 1;
 
-  return data[area].map((item: { timestamp: number; price: number }) => {
-    // convert the timestamp to ISO string, add the '+02:00' timezone offset
+  return data[area].map((item: { star_timestamp: number; marketprice: number }) => {
+    // convert the timestamp to ISO string, add the '+01:00' timezone offset
     const date = DateTime.fromISO(new Date(item.timestamp * 1000).toISOString()).setZone(defaultAreaTimezone);
 
     // divide by 10 to convert price to cents per kWh
-    item.price = parseFloat((item.price / 10).toFixed(decimalPrecision));
+    item.marketprice = parseFloat((item.marketprice / 10).toFixed(decimalPrecision));
 
     return {
       day: date.toFormat('yyyy-MM-dd'),
       hour: parseInt(date.toFormat('HH')),
-      price: item.price,
+      price: item.marketprice,
     };
   });
 }
