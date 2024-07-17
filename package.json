@@ -1,35 +1,32 @@
 {
-    "displayName": "Homebridge Nordpool LT, LV, EE, FI",
-    "name": "homebridge-nordpool-baltics",
+    "displayName": "Homebridge aWATTar Austria",
+    "name": "homebridge-awattar",
     "version": "1.4.4",
     "private": false,
     "description": "Plugin exposes virtual (switch, light, presence, temperature) accessories and enables HomeKit automation by Nordpool electricity pricing in supported countries.",
-    "homepage": "https://github.com/msegzda/homebridge-nordpool-baltics",
+    "homepage": "https://github.com/HerbertUnterberger/homebridge-aWATTar",
     "author": {
-        "name": "Mantas Segzda",
+        "name": "Herbert Unterberger",
         "email": "msegzda+nordpool@gmail.com"
     },
     "funding": [
         {
             "type": "paypal",
-            "url": "https://www.paypal.me/msegzda"
+            "url": "https://paypal.me/herbertunterberger?country.x=AT&locale.x=de_DE"
         }
     ],
     "license": "MIT",
     "repository": {
         "type": "git",
-        "url": "git+ssh://git@github.com/msegzda/homebridge-nordpool-baltics.git"
+        "url": "git+ssh://git@github.com/HerbertUnterberger/homebridge-aWATTar.git"
     },
     "bugs": {
-        "url": "https://github.com/msegzda/homebridge-nordpool-baltics/issues"
+        "url": "https://github.com/HerbertUnterberger/homebridge-aWATTar/issues"
     },
     "keywords": [
         "homebridge-plugin",
-        "nordpool",
-        "lithuania",
-        "latvia",
-        "estonia",
-        "finland",
+        "awattar",
+        "austria",
         "electricity",
         "spot",
         "price",
