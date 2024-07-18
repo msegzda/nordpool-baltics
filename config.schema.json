@@ -1,5 +1,5 @@
 {
-    "pluginAlias": "Nordpool",
+    "pluginAlias": "aWATTar",
     "pluginType": "platform",
     "singular": true,
     "schema": {
@@ -9,19 +9,19 @@
                 "title": "Bridge name",
                 "type": "string",
                 "required": true,
-                "placeholder": "Nordpool",
+                "placeholder": "aWATTar",
                 "description": "You'll see this name when you add the bridge in your Home app and in Homebridge logs.",
-                "default": "Nordpool"
+                "default": "aWATTar"
             },
             "area": {
-                "title": "Nordpool Market Area",
+                "title": "Area",
                 "type": "string",
                 "required": true,
-                "default": "LT",
+                "default": "AT",
                 "oneOf": [
                     {
-                        "title": "Lithuania",
-                        "enum": ["LT"]
+                        "title": "Austria",
+                        "enum": ["AT"]
                     },
                     {
                         "title": "Latvia",
