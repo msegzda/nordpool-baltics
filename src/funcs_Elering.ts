@@ -36,7 +36,7 @@ export function eleringEE_convertDataStructure(
   const area = config.area.toLowerCase();
   const decimalPrecision = config.decimalPrecision ?? 1;
 
-  return data[area].map((item: { star_timestamp: number; marketprice: number }) => {
+  return data[area].map((item: { start_timestamp: number; marketprice: number }) => {
     // convert the timestamp to ISO string, add the '+01:00' timezone offset
     const date = DateTime.fromISO(new Date(item.timestamp * 1000).toISOString()).setZone(defaultAreaTimezone);
 
