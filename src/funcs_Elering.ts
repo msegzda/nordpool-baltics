@@ -38,7 +38,7 @@ export function eleringEE_convertDataStructure(
 
   return data[area].map((item: { start_timestamp: number; marketprice: number }) => {
     // convert the timestamp to ISO string, add the '+01:00' timezone offset
-    const date = DateTime.fromISO(new Date(item.timestamp * 1000).toISOString()).setZone(defaultAreaTimezone);
+    const date = DateTime.fromISO(new Date(item.start_timestamp * 1000).toISOString()).setZone(defaultAreaTimezone);
 
     // divide by 10 to convert price to cents per kWh
     item.marketprice = parseFloat((item.marketprice / 10).toFixed(decimalPrecision));
