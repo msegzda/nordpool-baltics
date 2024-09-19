@@ -18,7 +18,7 @@ export const PLATFORM_SERIAL_NUMBER = 'UN783GU921Y0';
 export const devices = [
   {
     UniqueId: 'JKGhJH654*87pDE',
-    displayName: 'Nordpool',
+    displayName: 'aWATTar',
   },
 ];
 

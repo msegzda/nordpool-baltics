@@ -1,3 +1,4 @@
+
 import { PlatformAccessory, API } from 'homebridge';
 import { NordpoolPlatform } from './platform';
 
@@ -117,6 +118,7 @@ export class NordpoolPlatformAccessory {
             }
           } else {
             this.platform.log.warn('WARN: API returned no or abnormal results for todays\'s Nordpool prices data. Will retry in 1 hour');
+            //this.platform.log.info('Raw response:', results);
           }
         })
         .catch((error) => {

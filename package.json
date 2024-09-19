@@ -1,86 +1,87 @@
 {
-    "displayName": "Homebridge aWATTar Austria",
-    "name": "homebridge-awattar",
-    "version": "1.4.5",
-    "private": false,
-    "description": "Plugin exposes virtual (switch, light, presence, temperature) accessories and enables HomeKit automation by Nordpool electricity pricing in supported countries.",
-    "homepage": "https://github.com/HerbertUnterberger/homebridge-aWATTar",
-    "author": {
-        "name": "Herbert Unterberger",
-        "email": ""
-    },
-    "funding": [
-        {
-            "type": "paypal",
-            "url": "https://paypal.me/herbertunterberger?country.x=AT&locale.x=de_DE"
-        }
-    ],
-    "license": "MIT",
-    "repository": {
-        "type": "git",
-        "url": "git+https://git@github.com/HerbertUnterberger/homebridge-aWATTar.git"
-    },
-    "bugs": {
-        "url": "https://github.com/HerbertUnterberger/homebridge-aWATTar/issues"
-    },
-    "keywords": [
-        "homebridge-plugin",
-        "awattar",
-        "austria",
-        "electricity",
-        "spot",
-        "price",
-        "spot price",
-        "day-ahead",
-        "homekit",
-        "electricity market"
-    ],
-    "engines": {
-        "node": "^18.17.0 || ^20.9.0",
-        "homebridge": "^1.6.0"
-    },
-    "main": "dist/index.js",
-    "scripts": {
-        "lint:md": "markdownlint '*.md'",
-        "lint": "eslint src/**.ts --max-warnings=10",
-        "watch": "npm run build && npm link && nodemon",
-        "test": "jest --passWithNoTests && npm run lint:md",
-        "build": "rimraf ./dist && tsc",
-        "prepublishOnly": "npm run lint && npm run build",
-        "postpublish": "node ./src/deprecate-old-versions.mjs"
-    },
-    "jest": {
-        "preset": "ts-jest",
-        "testEnvironment": "node",
-        "passWithNoTests": true
-    },
-    "devDependencies": {
-        "@types/jest": "^29.5.12",
-        "@types/luxon": "^3.4.2",
-        "@types/node": "^18.19.18",
-        "@types/node-cron": "^3.0.11",
-        "@typescript-eslint/eslint-plugin": "^5.62.0",
-        "@typescript-eslint/parser": "^5.62.0",
-        "eslint": "^8.45.0",
-        "homebridge": "^1.2.5",
-        "jest": "^29.7.0",
-        "lodash": "^4.17.21",
-        "markdownlint": "^0.33.0",
-        "markdownlint-cli": "^0.39.0",
-        "nodemon": "^3.0.3",
-        "rimraf": "^3.0.2",
-        "semver": "^7.6.0",
-        "ts-jest": "^29.1.2",
-        "ts-node": "^10.9.1",
-        "typescript": "^5.3.3"
-    },
-    "dependencies": {
-        "@types/ramda": "^0.29.10",
-        "asciichart": "^1.5.25",
-        "axios": "^1.6.7",
-        "file-system-cache": "^2.4.4",
-        "luxon": "^3.4.4",
-        "node-cron": "^3.0.3",
-        "ramda": "^0.29.1"
+  "displayName": "Homebridge aWATTar Austria",
+  "name": "homebridge-awattar",
+  "version": "1.4.6",
+  "private": false,
+  "description": "Plugin exposes virtual (switch, light, presence, temperature) accessories and enables HomeKit automation by Nordpool electricity pricing in supported countries.",
+  "homepage": "https://github.com/HerbertUnterberger/homebridge-aWATTar",
+  "author": {
+    "name": "Herbert Unterberger",
+    "email": " "
+  },
+  "funding": [
+    {
+      "type": "paypal",
+      "url": "https://paypal.me/herbertunterberger?country.x=AT&locale.x=de_DE"
     }
+  ],
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://git@github.com/HerbertUnterberger/homebridge-aWATTar.git"
+  },
+  "bugs": {
+    "url": "https://github.com/HerbertUnterberger/homebridge-aWATTar/issues"
+  },
+  "keywords": [
+    "homebridge-plugin",
+    "awattar",
+    "austria",
+    "electricity",
+    "spot",
+    "price",
+    "spot price",
+    "day-ahead",
+    "homekit",
+    "electricity market"
+  ],
+  "engines": {
+    "node": "^18.17.0 || ^20.9.0",
+    "homebridge": "^1.6.0"
+  },
+  "main": "dist/index.js",
+  "scripts": {
+    "lint:md": "markdownlint '*.md'",
+    "lint": "eslint src/**.ts --max-warnings=10",
+    "watch": "npm run build && npm link && nodemon",
+    "test": "jest --passWithNoTests && npm run lint:md",
+    "build": "rimraf ./dist && tsc",
+    "prepublishOnly": "npm run lint && npm run build",
+    "postpublish": "node ./src/deprecate-old-versions.mjs"
+  },
+  "jest": {
+    "preset": "ts-jest",
+    "testEnvironment": "node",
+    "passWithNoTests": true
+  },
+  "devDependencies": {
+    "@types/jest": "^29.5.12",
+    "@types/luxon": "^3.4.2",
+    "@types/node": "^18.19.18",
+    "@types/node-cron": "^3.0.11",
+    "@typescript-eslint/eslint-plugin": "^5.62.0",
+    "@typescript-eslint/parser": "^5.62.0",
+    "eslint": "^8.45.0",
+    "homebridge": "^1.8.4",
+    "jest": "^29.7.0",
+    "lodash": "^4.17.21",
+    "markdownlint": "^0.33.0",
+    "markdownlint-cli": "^0.39.0",
+    "nodemon": "^3.0.3",
+    "rimraf": "^3.0.2",
+    "semver": "^7.6.0",
+    "ts-jest": "^29.1.2",
+    "ts-node": "^10.9.1",
+    "typescript": "^5.5.4"
+  },
+  "dependencies": {
+    "@types/ramda": "^0.29.10",
+    "asciichart": "^1.5.25",
+    "axios": "^1.7.3",
+    "file-system-cache": "^2.4.4",
+    "jackson-js": "^1.1.0",
+    "luxon": "^3.4.4",
+    "node-cron": "^3.0.3",
+    "ramda": "^0.29.1"
+  }
 }

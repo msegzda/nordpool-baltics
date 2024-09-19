@@ -8,8 +8,11 @@ import * as asciichart from 'asciichart';
 
 import {
   defaultAreaTimezone, PLATFORM_MANUFACTURER, PLATFORM_MODEL, PLATFORM_SERIAL_NUMBER,
-  pricing, NordpoolData, SensorType, defaultPricesCache, fnc_tomorrowKey, fnc_currentHour,
-} from './settings';
+  pricing, NordpoolData, SensorType, defaultPricesCache, fnc_tomorrowKey, fnc_currentHour} from './settings';
+
+
+
+
 
 export class Functions {
 
@@ -111,10 +114,12 @@ export class Functions {
   }
 
   async pullNordpoolData() {
-    if (this.platform.config.area.match(/^(LT|LV|EE|FI)$/) ) {
+    // if (this.platform.config.area.match(/^(LT|LV|EE|FI|AT)$/) )
+    {
       return eleringEE_getNordpoolData(this.platform.log, this.platform.config);
     }
   }
+
 
   async checkSystemTimezone() {
     const systemTimezone = DateTime.local().toFormat('ZZ');
