@@ -87,4 +87,3 @@ Additionally, please verify that your system's clock is regularly synchronized t
 If You need support with yourHomeKit Automation we are happy to make you an offer based on time expenditure.
 
 [Herbert Unterberger](mailto:office@greenmediaservice.tv?subject=[GitHub]%20Source%20Han%20Sans)
-
