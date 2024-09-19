@@ -1,12 +1,12 @@
 # homebridge-nordpool-baltics #
 
-[![verified-by-homebridge](https://badgen.net/badge/homebridge/verified/purple)](https://github.com/homebridge/verified/blob/latest/verified-plugins.json)
+
 [![NPM Version](https://img.shields.io/npm/v/homebridge-nordpool-baltics)](https://www.npmjs.com/package/homebridge-nordpool-baltics/v/latest)
 [![NPM Downloads](https://img.shields.io/npm/dw/homebridge-nordpool-baltics)](https://www.npmjs.com/package/homebridge-nordpool-baltics?activeTab=versions)
 ![NPM License](https://img.shields.io/npm/l/homebridge-nordpool-baltics)
-[![donate](https://badgen.net/badge/paypal/donate/003087?icon=https://simpleicons.now.sh/paypal/fff)](https://paypal.me/msegzda)
+[![donate](https://badgen.net/badge/paypal/donate/003087?icon=https://simpleicons.now.sh/paypal/fff)](https://paypal.me/herbertunterberger?country.x=AT&locale.x=de_DE)
 
-If your electricity is billed based on hourly rates through a smart meter, this plugin enables you to automate power-intensive appliances in accordance with Nordpool's pricing levels. For example, this could apply to:
+If your electricity is billed based on hourly rates through a smart meter, this plugin enables you to automate power-intensive appliances in accordance with aWATTar pricing levels. For example, this could apply to:
 
 - Car charging
 - House heating or cooling devices
@@ -14,12 +14,9 @@ If your electricity is billed based on hourly rates through a smart meter, this 
 - Washer-dryer
 - Water heater (a.k.a boiler)
 
-Currently, this plugin supports the following Nordpool electricity market areas:
+Currently, this plugin supports the following aWATTar electricity market areas:
 
-- Lithuania
-- Latvia
-- Estonia
-- Finland
+- Austria
 
 ## How To Install ##
 
@@ -29,27 +26,27 @@ First, complete the [Homebridge setup](https://homebridge.io/how-to-install-home
 
 Plugin exposes the below described 'virtual' accessories:
 
-1. `Nordpool_hourlyTickerSwitch`: A switch that cycles ON and OFF every hour. Use it in 'An Accessory is Controlled' event on HomeKit automation. Then check for desired price/levels further on automation logic;
+1. `hourlyTickerSwitch`: A switch that cycles ON and OFF every hour. Use it in 'An Accessory is Controlled' event on HomeKit automation. Then check for desired price/levels further on automation logic;
 
-1. `Nordpool_currentPrice`: A Light Sensor representing the current hour's electricity price in Euro cents (1 LUX = 1 cent). Due to HomeKit limitation, the minimal value is 0.0001, even if the actual price is 0 or negative.
+1. `currentPrice`: A Light Sensor representing the current hour's electricity price in Euro cents (1 LUX = 1 cent). Due to HomeKit limitation, the minimal value is 0.0001, even if the actual price is 0 or negative.
 
-1. `Nordpool_cheapestHour`: Motion Sensor goes into 'motion detected' state if current hour electricity price ranks cheapest in the day. There can be more than one cheapest hours in the event of repeated same-price occurrences;
+1. `cheapestHour`: Motion Sensor goes into 'motion detected' state if current hour electricity price ranks cheapest in the day. There can be more than one cheapest hours in the event of repeated same-price occurrences;
 
-1. `Nordpool_cheapest4Hours` to `Nordpool_cheapest12Hours` (optional on Plugin Config): A series of Motion Sensors which trigger a 'motion detected' state when the current hour's electricity price ranks among the cheapest of the day. The count can exceed the specified number in the event of repeated same-price occurrences;
+1. `cheapest4Hours` to `cheapest12Hours` (optional on Plugin Config): A series of Motion Sensors which trigger a 'motion detected' state when the current hour's electricity price ranks among the cheapest of the day. The count can exceed the specified number in the event of repeated same-price occurrences;
 
-1. `Nordpool_cheapest5HoursConsec` (optional on Plugin Config): This Motion Sensor triggers during the 5 consecutive lowest-priced electricity hours ensuring energy-intensive appliances can operate uninterrupted for a stretch of 5 hours. Note more details about its [calculation below](#cheapest-consecutive-hours-calculation-logic).
+1. `cheapest5HoursConsec` (optional on Plugin Config): This Motion Sensor triggers during the 5 consecutive lowest-priced electricity hours ensuring energy-intensive appliances can operate uninterrupted for a stretch of 5 hours. Note more details about its [calculation below](#cheapest-consecutive-hours-calculation-logic).
 
-1. `Nordpool_priciestHour`: This Motion Sensor triggers 'motion detected' when the following conditions are met:
+1. `priciestHour`: This Motion Sensor triggers 'motion detected' when the following conditions are met:
     - Current hour price is most expensive of the day;
     - OR current hour price is within 10% difference from most expensive hour;
     - OR current hour price exceeds configured 'Excessive Price Margin Above Median' value (default 200%);
     - AND all of above exceeds configured 'Minimum Price Threshold for Priciest Hour(s)' value (default 0).
 
-1. `Nordpool_currentHour` (optional on Plugin Config): Temperature sensor (possible values 0-23) denoting current hour of the day (24h format). Eliminates 'current hour' scripting needed on HomeKit rules.
+1. `currentHour` (optional on Plugin Config): Temperature sensor (possible values 0-23) denoting current hour of the day (24h format). Eliminates 'current hour' scripting needed on HomeKit rules.
 
 ## HomeKit Automation Examples ##
 
-Here are a few automation examples, based on real-life use cases. Please note, the names of the accessories from the `homebridge-nordpool-baltics` plugin have been renamed to improve readability.
+Here are a few automation examples, based on real-life use cases. Please note, the names of the accessories from the `homebridge-aWATTar` plugin have been renamed to improve readability.
 
 | Water heater | Floor heater | Car charging |
 | --------- | --------- | --------- |
@@ -60,7 +57,7 @@ Have you devised an ingenious automation making the most out of this plugin? Don
 
 ## Cheapest Consecutive Hours Calculation Logic ##
 
-Motion sensor `Nordpool_cheapest5HoursConsec` calculation logic is the following:
+Motion sensor `cheapest5HoursConsec` calculation logic is the following:
 
 ### If 'Dynamic Cheapest Consecutive Hours' is **Disabled** in Plugin Config ###
 
@@ -85,3 +82,10 @@ Configure your solar plant latitude ([locator here](https://www.latlong.net/)). 
 For accurate hour-to-price matching, it's important that the timezone of your homebridge system (the host) aligns with the timezone of the chosen Nordpool area. If there is a mismatch, the plugin will emit a warning in the log.
 
 Additionally, please verify that your system's clock is regularly synchronized to ensure consistent and accurate hour-to-price ticking.
+
+## If You need support with yourHomeKit Automation ##
+
+If You need support with yourHomeKit Automation we are happy to make you an offer based on time expenditure.
+
+([mail](office@greenmediaservice.tv))
+
