@@ -1,6 +1,5 @@
 # homebridge-nordpool-baltics #
 
-
 [![NPM Version](https://img.shields.io/npm/v/homebridge-nordpool-baltics)](https://www.npmjs.com/package/homebridge-nordpool-baltics/v/latest)
 [![NPM Downloads](https://img.shields.io/npm/dw/homebridge-nordpool-baltics)](https://www.npmjs.com/package/homebridge-nordpool-baltics?activeTab=versions)
 ![NPM License](https://img.shields.io/npm/l/homebridge-nordpool-baltics)
