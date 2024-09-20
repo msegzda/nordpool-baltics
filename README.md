@@ -1,4 +1,4 @@
-# homebridge-nordpool-baltics #
+# homebridge-aWATTar Austria #
 
 [![NPM Version](https://img.shields.io/npm/v/homebridge-nordpool-baltics)](https://www.npmjs.com/package/homebridge-nordpool-baltics/v/latest)
 [![NPM Downloads](https://img.shields.io/npm/dw/homebridge-nordpool-baltics)](https://www.npmjs.com/package/homebridge-nordpool-baltics?activeTab=versions)
@@ -87,3 +87,5 @@ Additionally, please verify that your system's clock is regularly synchronized t
 If You need support with yourHomeKit Automation we are happy to make you an offer based on time expenditure.
 
 [Herbert Unterberger](mailto:office@greenmediaservice.tv?subject=[GitHub]%20Source%20Han%20Sans)
+
+thx to Mantas Segzda 

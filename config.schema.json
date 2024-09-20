@@ -22,18 +22,6 @@
                     {
                         "title": "Austria",
                         "enum": ["AT"]
-                    },
-                    {
-                        "title": "Latvia",
-                        "enum": ["LV"]
-                    },
-                    {
-                        "title": "Estonia",
-                        "enum": ["EE"]
-                    },
-                    {
-                        "title": "Finland",
-                        "enum": ["FI"]
                     }
                 ]
             },

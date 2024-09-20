@@ -1,7 +1,7 @@
 {
   "displayName": "Homebridge aWATTar Austria",
   "name": "homebridge-awattar",
-  "version": "1.4.8",
+  "version": "1.4.9",
   "private": false,
   "description": "Plugin exposes virtual (switch, light, presence, temperature) accessories and enables HomeKit automation by Nordpool electricity pricing in supported countries.",
   "homepage": "https://github.com/HerbertUnterberger/homebridge-aWATTar",
