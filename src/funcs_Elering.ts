@@ -2,7 +2,7 @@ import { DateTime } from 'luxon';
 import { defaultAreaTimezone } from './settings';
 import axios from 'axios';
 import { Logger, PlatformConfig } from 'homebridge';
-import { map } from 'ramda';
+// import { map } from 'ramda';
 
 
 export async function eleringEE_getNordpoolData(log:Logger, config:PlatformConfig) {
