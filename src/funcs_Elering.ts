@@ -56,7 +56,7 @@ export function eleringEE_convertDataStructure(
   data: { start_timestamp: number; marketprice: number }[],
   config: PlatformConfig,
 ) {
-  const area = config.area.toLowerCase();
+  //const area = config.area.toLowerCase();
   const decimalPrecision = config.decimalPrecision ?? 1;
   [];
 
