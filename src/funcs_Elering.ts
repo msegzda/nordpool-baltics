@@ -18,10 +18,10 @@ export async function eleringEE_getNordpoolData(log:Logger, config:PlatformConfi
     const response = await axios.get(url);
 
     log.warn(`Werte ${JSON.stringify(response.data)}`);
-    log.warn(`Werte ${JSON.stringify(response.data.data)}`);
+    //log.warn(`Werte ${JSON.stringify(response.data.data)}`);
 
     log.info(response.data.data);
-    log.info(response.data);
+    //log.info(response.data);
     log.info(`${response.status}`);
     log.info(response.statusText);
     log.info(`${response.headers}`);

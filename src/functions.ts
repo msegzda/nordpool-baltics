@@ -38,8 +38,8 @@ export class Functions {
       .setCharacteristic(this.platform.Characteristic.SerialNumber, PLATFORM_SERIAL_NUMBER);
 
     // init light sensor for current price
-    this.service.currently = this.accessory.getService('Nordpool_currentPrice') || this.accessory.addService(
-      this.platform.Service.LightSensor, 'Nordpool_currentPrice', 'currentPrice');
+    this.service.currently = this.accessory.getService('currentPrice') || this.accessory.addService(
+      this.platform.Service.LightSensor, 'currentPrice', 'currentPrice');
 
     // set default price level
     if (this.service.currently) {
@@ -48,23 +48,23 @@ export class Functions {
     }
 
     // hourly ticker
-    this.service.hourlyTickerSwitch = this.accessory.getService('Nordpool_hourlyTickerSwitch') || this.accessory.addService(
-      this.platform.Service.Switch, 'Nordpool_hourlyTickerSwitch', 'hourlyTickerSwitch');
+    this.service.hourlyTickerSwitch = this.accessory.getService('hourlyTickerSwitch') || this.accessory.addService(
+      this.platform.Service.Switch, 'hourlyTickerSwitch', 'hourlyTickerSwitch');
 
     // current hour as temperature sensor
     if ( this.platform.config['currentHour'] !== undefined && this.platform.config['currentHour'] ) {
-      this.service.currentHour = this.accessory.getService('Nordpool_currentHour') || this.accessory.addService(
-        this.platform.Service.TemperatureSensor, 'Nordpool_currentHour', 'currentHour');
+      this.service.currentHour = this.accessory.getService('currentHour') || this.accessory.addService(
+        this.platform.Service.TemperatureSensor, 'currentHour', 'currentHour');
 
       if (this.service.currentHour) {
         this.service.currentHour.getCharacteristic(this.platform.Characteristic.CurrentTemperature)
           .updateValue(fnc_currentHour());
       }
     } else {
-      const currentHourService = this.accessory.getService('Nordpool_currentHour');
+      const currentHourService = this.accessory.getService('currentHour');
       if (currentHourService !== undefined) {
         this.accessory.removeService(currentHourService);
-        this.platform.log.debug('Accessory Nordpool_currentHour removed according to Plugin Config');
+        this.platform.log.debug('Accessory currentHour removed according to Plugin Config');
       }
     }
 
@@ -86,20 +86,20 @@ export class Functions {
     for (const key of Object.keys(this.service)) {
       if (/^(cheapest|priciest)/.test(key)) {
 
-        const accessoryService = this.accessory.getService(`Nordpool_${key}`);
+        const accessoryService = this.accessory.getService(`${key}`);
 
         if ( this.platform.config[key] !== undefined && !this.platform.config[key] ) {
           if ( accessoryService !== undefined ) {
             this.accessory.removeService(accessoryService);
-            this.platform.log.debug(`Accessory Nordpool_${key} removed according to Plugin Config`);
+            this.platform.log.debug(`Accessory ${key} removed according to Plugin Config`);
           } else {
-            this.platform.log.debug(`Accessory Nordpool_${key} skipped according to Plugin Config`);
+            this.platform.log.debug(`Accessory ${key} skipped according to Plugin Config`);
           }
           continue;
         }
 
         this.service[key] = accessoryService
-        || this.accessory.addService(this.platform.Service.OccupancySensor, `Nordpool_${key}`, key);
+        || this.accessory.addService(this.platform.Service.OccupancySensor, `${key}`, key);
 
         if ( this.service[key] ) {
             this.service[key]!
@@ -129,7 +129,7 @@ export class Functions {
       this.platform.log.warn(
         `WARN: System timezone ${systemTimezone} DOES NOT match with ${this.platform.config.area} area timezone ${preferredTimezone}.`
         + 'This may result in incorrect time-to-price coding. If possible, please update your system time setting to match timezone of '
-        + 'your specified Nordpool area.',
+        + 'your specified area.',
       );
     } else {
       this.platform.log.debug(
@@ -270,7 +270,7 @@ export class Functions {
 
     if (this.plotTheChart) {
       this.plotPricesChart().then().catch((error)=> {
-        this.platform.log.error('An error occurred plotting the chart for today\'s Nordpool data: ', error);
+        this.platform.log.error('An error occurred plotting the chart for today\'s data: ', error);
       });
     }
 
@@ -342,7 +342,7 @@ export class Functions {
     if (pricing.today.length === 24 || pricing.today.length === 23 ) {
       pricing.currently = pricing.today[currentHour]['price'];
     } else {
-      this.platform.log.warn('WARN: Unable to determine current hour Nordpool price because data not available');
+      this.platform.log.warn('WARN: Unable to determine current hour price because data not available');
       return;
     }
 

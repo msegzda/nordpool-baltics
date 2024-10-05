@@ -3,6 +3,7 @@ import * as Path from 'path';
 import * as fs from 'fs';
 import { DateTime } from 'luxon';
 import { Cache } from 'file-system-cache';
+import { log } from 'console';
 
 /* eslint @typescript-eslint/no-var-requires: "off" */
 const pkg = require('../package.json');
@@ -95,6 +96,24 @@ export function defaultPricesCache(api: API) {
   const nsHash = 'b162cf22c8adb8fa829628b261839cad18dc3994';
   const storagePath = api.user.storagePath();
   const cacheDirectory = Path.join(storagePath, '.cache');
+
+  // check if directory .cache exists
+  fs.access(cacheDirectory, (error) => {
+
+    // To check if the given directory already exists or not
+    if (error) {
+      // If current directory does not exist then create it
+      fs.mkdir(cacheDirectory, (error) => {
+        if (error) {
+          log(error);
+        } else {
+          log('New Directory created successfully !!');
+        }
+      });
+    } else {
+      log('Given Directory already exists !!');
+    }
+  });
 
   // auto-cleanup of old cached files on init
   const files = fs.readdirSync(cacheDirectory);
