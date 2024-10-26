@@ -86,7 +86,7 @@ export class NordpoolPlatformAccessory {
             const todayResults = results.filter(result => result.day === todayKey);
             const tomorrowResults = results.filter(result => result.day === tomorrowKey);
 
-            if (todayResults.length === 24 || todayResults.length === 23 ) {
+            if (todayResults.length === 25 || todayResults.length === 24 || todayResults.length === 23 ) {
               this.pricesCache.set(todayKey, todayResults);
               pricing.today = todayResults;
               this.pricesCache.setSync(`solarOverrideApplied_${todayKey}`, false);

@@ -334,7 +334,7 @@ export class Functions {
 
   async analyze_and_setServices (currentHour: number) {
 
-    if (pricing.today.length === 24 || pricing.today.length === 23 ) {
+    if (pricing.today.length === 25 || pricing.today.length === 24 || pricing.today.length === 23 ) {
       pricing.currently = pricing.today[currentHour]['price'];
     } else {
       this.platform.log.warn('WARN: Unable to determine current hour Nordpool price because data not available');
