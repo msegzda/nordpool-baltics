@@ -13,7 +13,8 @@ export class NordpoolPlatform implements DynamicPlatformPlugin {
   public readonly Characteristic: typeof Characteristic = this.api.hap.Characteristic;
 
   // this is used to track restored cached accessories
-  public readonly accessories: PlatformAccessory[] = [];
+  public readonly accessories: Map<string, PlatformAccessory> = new Map();
+  public readonly discoveredCacheUUIDs: string[] = [];
 
   constructor(
     public readonly log: Logger,
@@ -37,7 +38,7 @@ export class NordpoolPlatform implements DynamicPlatformPlugin {
     this.log.debug('Loading accessory from cache:', accessory.displayName);
 
     // add the restored accessory to the accessories cache so we can track if it has already been registered
-    this.accessories.push(accessory);
+    this.accessories.set(accessory.UUID, accessory);
   }
 
   /**
@@ -57,7 +58,7 @@ export class NordpoolPlatform implements DynamicPlatformPlugin {
 
       // see if an accessory with the same uuid has already been registered and restored from
       // the cached devices we stored in the `configureAccessory` method above
-      const existingAccessory = this.accessories.find(accessory => accessory.UUID === uuid);
+      const existingAccessory = this.accessories.get(uuid);
 
       if (existingAccessory) {
         // the accessory already exists
@@ -92,6 +93,15 @@ export class NordpoolPlatform implements DynamicPlatformPlugin {
 
         // link the accessory to your platform
         this.api.registerPlatformAccessories(PLUGIN_NAME, PLATFORM_NAME, [accessory]);
+      }
+      // push into discoveredCacheUUIDs
+      this.discoveredCacheUUIDs.push(uuid);
+    }
+
+    for (const [uuid, accessory] of this.accessories) {
+      if (!this.discoveredCacheUUIDs.includes(uuid)) {
+        this.log.info('Removing existing accessory from cache:', accessory.displayName);
+        this.api.unregisterPlatformAccessories(PLUGIN_NAME, PLATFORM_NAME, [accessory]);
       }
     }
   }
