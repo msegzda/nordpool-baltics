@@ -1,4 +1,4 @@
-import { PlatformAccessory, API, PlatformConfig } from 'homebridge';
+import { PlatformAccessory, API, PlatformConfig, Logging } from 'homebridge';
 import { NordpoolPlatform } from './platform';
 import { eleringEE_getNordpoolData } from './funcs_Elering';
 import { fnc_todayKey } from './settings';
@@ -18,7 +18,7 @@ export class Functions {
   private minPriciestMargin = this.platform.config.minPriciestMargin ?? 0;
   private plotTheChart:boolean = this.platform.config.plotTheChart ?? false;
   private dynamicCheapestConsecutiveHours:boolean = this.platform.config.dynamicCheapestConsecutiveHours ?? false;
-  private pricesCache = defaultPricesCache(this.api);
+  private pricesCache = defaultPricesCache(this.api, this.platform.log as Logging);
 
   constructor(
     private readonly platform: NordpoolPlatform,

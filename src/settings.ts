@@ -1,4 +1,4 @@
-import { Service, API } from 'homebridge';
+import { Service, API, Logging } from 'homebridge';
 import * as Path from 'path';
 import * as fs from 'fs';
 import { DateTime } from 'luxon';
@@ -90,27 +90,71 @@ export const defaultService: SensorType = {
   hourlyTickerSwitch: null,
 };
 
-export function defaultPricesCache(api: API) {
+export function defaultPricesCache(api: API, log: Logging) {
   const ns = 'homebridge-nordpool-baltics';
   const nsHash = 'b162cf22c8adb8fa829628b261839cad18dc3994';
   const storagePath = api.user.storagePath();
   const cacheDirectory = Path.join(storagePath, '.cache');
 
-  // auto-cleanup of old cached files on init
+  try {
+    // Ensure .cache directory exists
+    if (!fs.existsSync(cacheDirectory)) {
+      fs.mkdirSync(cacheDirectory, { recursive: true });
+      log.debug(`OK: Cache directory created at ${cacheDirectory}`);
+    }
+
+    // Check if directory is writable
+    fs.accessSync(cacheDirectory, fs.constants.W_OK);
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      log.warn(`Failed to access or create cache directory at ${cacheDirectory}: ${error.message}`);
+    } else {
+      log.warn(`Failed to access or create cache directory at ${cacheDirectory}: Unknown error`);
+    }
+  }
+
+  // Auto-cleanup of old cached files on init
   const files = fs.readdirSync(cacheDirectory);
   const now = Date.now();
 
   files.filter(file => file.startsWith(`${nsHash}-`)).forEach(file => {
     const filePath = Path.join(cacheDirectory, file);
-    const stats = fs.statSync(filePath);
-    const fileAge = now - stats.mtimeMs;
 
-    // Check if file is older than 2 days
-    if (fileAge >= 172800*1000*2) {
-      try {
+    try {
+      // Attempt to make file writable if needed
+      fs.accessSync(filePath, fs.constants.W_OK);
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        log.warn(`File not writable, attempting to change permissions for: ${filePath}`);
+        try {
+          fs.chmodSync(filePath, 0o666); // Best-effort for UNIX-like systems
+          log.debug(`OK: Permissions changed to 0666 for: ${filePath}`);
+        } catch (chmodError: unknown) {
+          if (chmodError instanceof Error) {
+            log.warn(`Failed to change permissions for file: ${filePath}. Error: ${chmodError.message}`);
+          } else {
+            log.warn(`Failed to change permissions for file: ${filePath}. Unknown error`);
+          }
+        }
+      } else {
+        log.warn(`File not writable, unknown error while checking permissions for: ${filePath}`);
+      }
+    }
+
+    try {
+      const stats = fs.statSync(filePath);
+      const fileAge = now - stats.mtimeMs;
+
+      // If the file is older than 2 days, clean up
+      if (fileAge >= 172800 * 1000 * 2) {
         fs.unlinkSync(filePath);
-      } catch (error) {
-      // Ignore any error
+        log.debug(`OK: Deleted old cache file: ${filePath}`);
+      }
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        log.warn(`Failed to access file stats or delete file: ${filePath}. Error: ${error.message}`);
+      } else {
+        log.warn(`Failed to access file stats or delete file: ${filePath}. Unknown error`);
       }
     }
   });
